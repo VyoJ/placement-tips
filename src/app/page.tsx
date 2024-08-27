@@ -5,7 +5,7 @@ import Link from "next/link"
 
 export default function Home() {
   return (
-    <div className="space-y-8 md:space-y-12 pb-8">
+    <div className="space-y-8 md:space-y-12 p-4">
       <section className="relative bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-800 dark:to-indigo-900 text-white py-12 md:py-20 px-4">
         <div className="container mx-auto text-center relative z-10">
           <h1 className="text-3xl md:text-5xl font-extrabold mb-4">Welcome to Placement Tips!</h1>

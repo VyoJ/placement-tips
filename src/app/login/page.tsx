@@ -1,68 +1,116 @@
-"use client";
+'use client'
 
-import { useState } from 'react';
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { useRouter } from 'next/navigation';
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
+
+import { Button } from '@/components/ui/button'
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { toast } from '@/components/ui/use-toast'
+
+const formSchema = z.object({
+    email: z.string().email({
+        message: 'Please enter a valid email address.',
+    }),
+    password: z.string().min(1, {
+        message: 'Password must be at least 1 character long.',
+    }),
+})
 
 export default function Login() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
+    const [error, setError] = useState<string | null>(null)
+    const router = useRouter()
 
-    const handleSubmit = async (event: React.FormEvent) => {
-        event.preventDefault();
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+    })
 
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         const result = await signIn('credentials', {
             redirect: false,
-            email,
-            password
-        });
+            email: values.email,
+            password: values.password,
+        })
 
         if (result?.error) {
-            setError(result.error);
+            setError(result.error)
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: result.error,
+            })
         } else {
-            router.push("/admin");
+            toast({
+                title: 'Logged in succesfully!',
+                description: 'Redirecting to admin page'
+            })
+            router.push('/admin');
         }
-    };
+    }
 
     return (
-        <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
-            <div className="mx-auto w-full max-w-md space-y-6">
-                <div className="text-center">
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Sign in to your account</h1>
-                    <p className="mt-2 text-muted-foreground">Enter your email and password below to access your account.</p>
-                </div>
-                <Card>
-                    <CardContent className="space-y-4">
-                        {error && <div className="text-red-500">{error}</div>}
-                        <form onSubmit={handleSubmit}>
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                            </div>
-                            <CardFooter>
-                                <Button className="w-full" type="submit">Sign in</Button>
-                            </CardFooter>
+        <div className="flex items-center justify-center h-[calc(100vh-121px)] bg-background px-4 py-12 sm:px-6 lg:px-8">
+            <Card className="w-full max-w-md">
+                <CardHeader className="space-y-1">
+                    <div className="flex items-center justify-between">
+                        <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
+                    </div>
+                    <CardDescription>
+                        Enter your email and password to access your account
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="m@example.com" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Password</FormLabel>
+                                        <FormControl>
+                                            <Input type="password" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button className="w-full" type="submit">
+                                Sign in
+                            </Button>
                         </form>
-                    </CardContent>
-                </Card>
-                <div className="text-center text-sm text-muted-foreground">
-                    Don&apos;t have an account?{" "}
-                    <Link href="#" className="font-medium underline" prefetch={false}>
-                        Register
-                    </Link>
-                </div>
-            </div>
+                    </Form>
+                </CardContent>
+            </Card>
         </div>
-    );
+    )
 }

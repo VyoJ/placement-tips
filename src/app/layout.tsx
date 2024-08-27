@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Provider } from "./provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 
@@ -29,9 +30,10 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Navbar />
-            <main className="container mx-auto px-6 py-8">
+            <main>
               {children}
             </main>
+            <Toaster />
             <Footer />
           </ThemeProvider>
         </body>
