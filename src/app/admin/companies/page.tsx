@@ -66,7 +66,7 @@ function AdminCompanies() {
     useEffect(() => {
         const fetchCompanies = async () => {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/companies`)
+                const response = await axios.get("/api/companies")
                 setCompanies(response.data)
             } catch (error) {
                 toast({
@@ -81,7 +81,7 @@ function AdminCompanies() {
 
     const deleteCompany = async (id: string) => {
         try {
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/companies/${id}`)
+            await axios.delete(`/api/companies/${id}`)
             setCompanies(companies.filter(company => company._id !== id))
             toast({
                 title: "Company Deleted",
@@ -100,7 +100,7 @@ function AdminCompanies() {
 
         try {
             const updatedCompany = { ...editingCompany, ...values, roles: values.roles.split(',').map(role => role.trim()) }
-            const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/companies`, updatedCompany)
+            const response = await axios.put(`/api/companies`, updatedCompany)
             setCompanies(companies.map(company => company._id === editingCompany._id ? response.data : company))
             setEditingCompany(null)
             setIsEditDialogOpen(false)
@@ -119,7 +119,7 @@ function AdminCompanies() {
     const handleAddSubmit = async (values: z.infer<typeof companySchema>) => {
         try {
             const newCompany = { ...values, roles: values.roles.split(',').map(role => role.trim()) }
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/companies`, newCompany)
+            const response = await axios.post(`/api/companies`, newCompany)
             setCompanies([...companies, response.data])
             setIsAddDialogOpen(false)
             addForm.reset()

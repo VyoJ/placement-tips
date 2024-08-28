@@ -116,7 +116,7 @@ interface Company {
 
 async function getLatestTips(): Promise<Tip[]> {
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/latest-tips`);
+    const response = await axios.get("/api/latest-tips");
     return response.data;
   } catch (error) {
     console.error('Failed to fetch latest tips:', error);
@@ -126,7 +126,7 @@ async function getLatestTips(): Promise<Tip[]> {
 
 async function getFeaturedCompanies(): Promise<Company[]> {
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/featured-companies`);
+    const response = await axios.get("/api/featured-companies");
     return response.data;
   } catch (error) {
     console.error('Failed to fetch featured companies:', error);

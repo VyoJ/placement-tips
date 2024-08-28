@@ -27,7 +27,7 @@ function AdminTips() {
     useEffect(() => {
         const fetchTips = async () => {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/tips`)
+                const response = await axios.get(`/api/tips`)
                 setTips(response.data)
             } catch (error) {
                 toast({
@@ -42,7 +42,7 @@ function AdminTips() {
 
     const deleteTip = async (id: string) => {
         try {
-            await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/tips/${id}`)
+            await axios.delete(`/api/tips/${id}`)
             setTips(tips.filter(tip => tip._id !== id))
             toast({
                 title: "Tip Deleted",
@@ -61,7 +61,7 @@ function AdminTips() {
         if (!editingTip) return
 
         try {
-            let editedTip: ITip = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/tips`, editingTip)
+            let editedTip: ITip = await axios.put(`/api/tips`, editingTip)
             setTips(tips.map(tip => tip._id === editingTip._id ? editingTip : tip))
             setEditingTip(editedTip)
             toast({
@@ -86,7 +86,7 @@ function AdminTips() {
         }
 
         try {
-            let savedTip: ITip = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/tips`, newTip)
+            let savedTip: ITip = await axios.post(`/api/tips`, newTip)
             console.log("savedTip", savedTip)
             setTips([...tips, savedTip])
             toast({
